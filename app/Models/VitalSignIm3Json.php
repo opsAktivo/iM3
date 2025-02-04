@@ -15,6 +15,9 @@ class VitalSignIm3Json extends Model
 
     protected $fillable = [
         "machine_timestamp",
+        "no_rawat",
+        "tgl_perawatan",
+        "jam_rawat",
 
         "patient_id",
         "patient_name",

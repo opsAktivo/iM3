@@ -212,6 +212,9 @@ class ProcessHl7Message implements ShouldQueue
         $segments = explode("\r", trim($hl7Message));
         $patientData = [
             'machine_timestamp' => null,
+            'no_rawat' => null,
+            'tgl_perawatan' => null,
+            'jam_rawat' => null,
             'patient_id' => null,
             'patient_name' => null,
 
@@ -281,9 +284,16 @@ class ProcessHl7Message implements ShouldQueue
     private function insertPatientData($patientData)
     {
         $currentDateTime = Carbon::now();
+        $no_rawat = $currentDateTime->format('Ymd_His');
+        $tgl_perawatan = $currentDateTime->toDateString();
+        $jam_rawat = $currentDateTime->format('H:i:s');
+
 
         DB::table('vital_signs_im3_json')->insert([
             'machine_timestamp' => $patientData['machine_timestamp'],
+            'no_rawat' => $no_rawat,
+            'tgl_perawatan' => $tgl_perawatan,
+            'jam_rawat' => $jam_rawat,
             'created_at' => now(),
             'updated_at' => now(),
 

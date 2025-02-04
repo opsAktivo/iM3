@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('vital_signs_im3_json', function (Blueprint $table) {
             $table->id();
             $table->string('machine_timestamp');
+            $table->string('no_rawat');
+            $table->date('tgl_perawatan');
+            $table->time('jam_rawat');
 
             $table->string('patient_id')->nullable();
             $table->string('patient_name')->nullable();
