@@ -1,0 +1,3 @@
+Notes: Query for the database
+SHOW CREATE TABLE vital_signs_im3_raw;
+ALTER TABLE vital_signs_im3_raw MODIFY COLUMN raw_message LONGTEXT;
