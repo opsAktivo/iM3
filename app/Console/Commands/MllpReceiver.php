@@ -64,7 +64,10 @@ class MllpHandler implements MessageComponentInterface
 
             ProcessHl7Message::dispatch($id);
 
-            $from->send("\x0B" . "ACK; RECEIVED" . "\x1C\x0D");
+            $messageControlId = $this->extractMessageControlId($decodedMessage);
+            $ackMessage = $this->generateAckMessage($messageControlId);
+
+            $from->send("\x0B" . $ackMessage . "\x1C\x0D");
 
         } else {
             Log::warning('Invalid MLLP message format received');
@@ -79,6 +82,25 @@ class MllpHandler implements MessageComponentInterface
         foreach ($lines as $line) {
             echo $line . PHP_EOL;
         }
+    }
+
+    private function extractMessageControlId($message) {
+        $lines = explode("\n", $message);
+        foreach ($lines as $line) {
+            if (strpos($line, 'MSH') === 0) {
+                $fields = explode('|', $line);
+                return $fields[9] ?? '';
+            }
+        }
+        return '';
+    }
+
+    private function generateAckMessage($messageControlId) {
+        $currentDateTime = now()->format('YmdHis');
+        $ackMessage = "MSH|^~\\&|||Vital Signs Monitor||{$currentDateTime}||ACK|{$messageControlId}||2.3.1\n";
+        $ackMessage .= "MSA|AA|{$messageControlId}";
+
+        return $ackMessage;
     }
 
     public function onClose(ConnectionInterface $conn)
